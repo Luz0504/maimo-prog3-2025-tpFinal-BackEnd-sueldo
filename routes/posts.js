@@ -72,31 +72,4 @@ router.get("/:postId", async (req, res) => {
   }
 });
 
-// Eliminar un post
-router.delete("/:postId", async (req, res) => {
-  try {
-    const { postId } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(postId)) {
-      return res.status(400).send({ message: "ID de post inválido." });
-    }
-
-    const deletedPost = await Post.findByIdAndDelete(postId);
-
-    if (!deletedPost) {
-      return res.status(404).send({ message: "Post no encontrado." });
-    }
-
-    return res.status(200).send({
-      message: "Post eliminado correctamente.",
-      post: deletedPost,
-    });
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .send({ message: "Error al eliminar el post", error });
-  }
-});
-
 export default router;
