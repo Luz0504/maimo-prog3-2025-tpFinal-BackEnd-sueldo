@@ -8,18 +8,14 @@ const router = express.Router();
 //Crea un thread dentro de un foro
 router.post("/", async (req, res) => {
   try {
-    const { forum_id, user_id, title } = req.body;
-
-    if (!forum_id || !user_id || !title) {
-      return res.status(400).send({ message: "Faltan campos obligatorios." });
-    }
+    const { forum_id, title } = req.body;
 
     const forumExists = await Forum.findById(forum_id);
     if (!forumExists) {
       return res.status(404).send({ message: "El foro no existe." });
     }
 
-    const thread = new Thread({ forum_id, user_id, title });
+    const thread = new Thread({ forum_id, title });
     await thread.save();
 
     return res.status(201).send({
@@ -32,7 +28,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-//obtiene un post dentro de un thread
+//obtiene los posts dentro de un thread
 router.get("/:threadId/posts", async (req, res) => {
   try {
     const { threadId } = req.params;
@@ -44,7 +40,7 @@ router.get("/:threadId/posts", async (req, res) => {
 
     const posts = await Post.find({ thread_id: threadId })
       .select("_id user_id content created_at updated_at")
-      .populate("user_id", "username avatar_url");
+      .populate("user_id", "username");
 
     return res.status(200).send({
       message: "Posts del thread",
@@ -53,7 +49,7 @@ router.get("/:threadId/posts", async (req, res) => {
         title: thread.title,
         forum: thread.forum_id.name,
       },
-      posts,
+      posts
     });
   } catch (error) {
     console.error(error);
