@@ -9,30 +9,24 @@ const router = express.Router();
 // Crear un nuevo post
 router.post("/", async (req, res) => {
   try {
-    const { thread_id, user_id, content } = req.body;
-
-    if (!thread_id || !user_id || !content) {
-      return res.status(400).send({ message: "Faltan campos obligatorios." });
-    }
-
-    if (
-      !mongoose.Types.ObjectId.isValid(thread_id) ||
-      !mongoose.Types.ObjectId.isValid(user_id)
-    ) {
-      return res.status(400).send({ message: "ID inválido." });
-    }
+    const { thread_id, user, content } = req.body;
 
     const threadExists = await Thread.findById(thread_id);
     if (!threadExists) {
       return res.status(404).send({ message: "Thread no encontrado." });
     }
 
-    const userExists = await User.findById(user_id);
+    const userExists = await User.findById(user);
     if (!userExists) {
       return res.status(404).send({ message: "Usuario no encontrado." });
     }
 
-    const post = new Post({ thread_id, user_id, content });
+    const post = new Post({
+      thread_id,
+      user,
+      content,
+    });
+
     await post.save();
 
     return res.status(201).send({
@@ -45,7 +39,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Obtener un post por ID
+// Obtener el post
 router.get("/:postId", async (req, res) => {
   try {
     const { postId } = req.params;
@@ -55,8 +49,8 @@ router.get("/:postId", async (req, res) => {
     }
 
     const post = await Post.findById(postId)
-      .populate("user_id", "username avatar_url")
-      .populate("thread_id", "title");
+      .populate("thread_id", "title")
+      .populate("user", "username avatar_url email");
 
     if (!post) {
       return res.status(404).send({ message: "Post no encontrado." });

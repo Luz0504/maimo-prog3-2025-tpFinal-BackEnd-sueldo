@@ -5,6 +5,7 @@ import forumRoutes from "./routes/forums.js";
 import threadRoutes from "./routes/threads.js";
 import postRoutes from "./routes/posts.js";
 import userRoutes from "./routes/users.js";
+import indexRoutes from "./routes/index.js"
 
 /* Clear the console  */
 console.log("\x1Bc");
@@ -37,10 +38,12 @@ app.use(
 );
 
 /* Routes */
+app.use("/", indexRoutes);
 app.use("/forums", forumRoutes);
 app.use("/threads", threadRoutes);
 app.use("/posts", postRoutes);
 app.use("/users", userRoutes);
+
 
 /* Error handler  */
 // catch 404 and forward to error handler

@@ -39,8 +39,8 @@ router.get("/:threadId/posts", async (req, res) => {
     }
 
     const posts = await Post.find({ thread_id: threadId })
-      .select("_id user_id content created_at updated_at")
-      .populate("user_id", "username");
+      .select("_id user content imagen created_at updated_at")
+      .populate("user", "username avatar_url");
 
     return res.status(200).send({
       message: "Posts del thread",

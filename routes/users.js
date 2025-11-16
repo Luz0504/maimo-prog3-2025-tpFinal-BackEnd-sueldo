@@ -6,9 +6,9 @@ const router = express.Router();
 //Crea usuario
 router.post("/", async (req, res) => {
   try {
-    const { username, avatar_url } = req.body;
+    const { username, avatar_url, email } = req.body;
 
-    const user = new User({ username, avatar_url });
+    const user = new User({ username, avatar_url, email });
     await user.save();
 
     return res.status(201).send({
@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
 //Lista usuarios
 router.get("/", async (_req, res) => {
   try {
-    const users = await User.find().select("_id username avatar_url");
+    const users = await User.find().select("_id username avatar_url emal");
     return res.status(200).send({
       message: "Todos los usuarios",
       users,
