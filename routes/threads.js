@@ -28,7 +28,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-//obtiene los posts dentro de un thread
+//obtener los posts dentro de un thread
 router.get("/:threadId/posts", async (req, res) => {
   try {
     const { threadId } = req.params;
