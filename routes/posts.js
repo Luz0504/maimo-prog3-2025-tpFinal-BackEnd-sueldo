@@ -66,4 +66,33 @@ router.get("/:postId", async (req, res) => {
   }
 });
 
+// Obtener todos los posts de un usuario
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send({ message: "ID de usuario inválido." });
+    }
+
+    const posts = await Post.find({ user: userId })
+      .populate("thread_id", "title")
+      .populate("user", "username avatar_url email")
+      .sort({ created_at: -1 }); // opcional: posts más nuevos primero
+
+    if (!posts || posts.length === 0) {
+      return res.status(404).send({ message: "Este usuario no tiene posts." });
+    }
+
+    return res.status(200).send({
+      message: "Posts del usuario encontrados.",
+      posts,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ message: "Error al obtener los posts", error });
+  }
+});
+
+
 export default router;
